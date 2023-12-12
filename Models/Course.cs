@@ -1,6 +1,8 @@
-﻿namespace StudentmManagement.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace StudentmManagement.Models
 {
-    public class CoursesModel
+    public class Course
     {
         public string CourseId { get; set; } = string.Empty;
         public string CourseName { get; set; } = string.Empty;

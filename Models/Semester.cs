@@ -2,7 +2,7 @@
 
 namespace StudentmManagement.Models
 {
-    public class SemesterModel
+    public class Semester
     {
         public SemesterCode SemesterCode { get; set; }
         public string? Year { get; set; }

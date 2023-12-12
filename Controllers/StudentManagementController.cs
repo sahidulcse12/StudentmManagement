@@ -8,27 +8,27 @@ namespace StudentmManagement.Controllers
     [Route("api/[controller]")]
     public class StudentManagementController:ControllerBase
     {
-        private readonly ILogger<StudentsModel> _logger;
-        private readonly IstudentManagement _iStudentManagement;
+        private readonly ILogger<Student> _logger;
+        private readonly IStudentManagementService _service;
 
-        public StudentManagementController(ILogger<StudentsModel>logger, IstudentManagement iStudentManagement)
+        public StudentManagementController(ILogger<Student>logger, IStudentManagementService service)
         {
             _logger = logger;
-            _iStudentManagement = iStudentManagement;
+            _service = service;
         }
 
         [HttpGet]
-        public ActionResult<List<StudentsModel>> Get()
+        public ActionResult Get()
         {
-            var item = _iStudentManagement.GetAll();
+            var item = _service.GetAll();
             return Ok(item);
         }
 
         [HttpGet("{id}")]
-        public ActionResult<StudentsModel> Get(string id) 
+        public ActionResult<Student> Get(string id) 
         { 
-            var studnet = _iStudentManagement.GetById(id);
-            if(studnet== null)
+            var studnet = _service.GetById(id);
+            if(studnet == null)
             {
                 return NotFound();
             }
@@ -36,16 +36,16 @@ namespace StudentmManagement.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] StudentsModel newStudnet) 
+        public IActionResult Add([FromBody] Student newStudnet) 
         { 
-            _iStudentManagement.AddNewStudent(newStudnet);
+            _service.Add(newStudnet);
             return CreatedAtAction(nameof(Get),new {id=newStudnet.StudentId},newStudnet);
         }
 
         [HttpPut]
-        public IActionResult Put(string id,[FromBody] StudentsModel updateStudnet)
+        public IActionResult Update(string id,[FromBody] Student updateStudnet)
         {
-            var success = _iStudentManagement.Update(id, updateStudnet);
+            var success = _service.Update(id, updateStudnet);
             if(!success)
             {
                 return NotFound();
@@ -56,8 +56,8 @@ namespace StudentmManagement.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(string id)
         {
-            var foundStudnet = _iStudentManagement.Delete(id);
-            if(!foundStudnet)
+            var success = _service.Delete(id);
+            if(!success)
             {
                 return NotFound();
             }

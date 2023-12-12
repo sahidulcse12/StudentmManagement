@@ -6,54 +6,49 @@ using System.Text.Json.Serialization;
 
 namespace StudentmManagement.Services
 {
-    public class StudentManagementService:IstudentManagement
+    public class StudentManagementService : IStudentManagementService
     {
-        private static string StudentsFilePath = "studentsdata.json";
+        private static string StudentsFilePath = "studentsData.json";
         private readonly ILogger<StudentManagementService> _logger;
-        private static List<StudentsModel>? _students;
-        private static List<CoursesModel> courses = new List<CoursesModel>() 
-        { 
-            new CoursesModel {CourseId = "CSE 101", CourseName="C ", InstructorName="John De", NumberOfCredits=3.0},
-            new CoursesModel {CourseId = "CSE 102", CourseName="Java ", InstructorName="Mickel", NumberOfCredits=3.5},
-            new CoursesModel {CourseId = "CSE 103", CourseName="Go ", InstructorName="Aultman", NumberOfCredits=2.0},
-            new CoursesModel {CourseId = "CSE 104", CourseName="C++ ", InstructorName="Roberto", NumberOfCredits=2.5},
-            new CoursesModel {CourseId = "CSE 105", CourseName="C# ", InstructorName="Jerry", NumberOfCredits=3.5}
-        };
+        private static List<Student> _students = new List<Student>();
 
         public StudentManagementService(ILogger<StudentManagementService> logger)
         {
             _logger = logger;
-            _students = GetAll();
+            _students = Load();
         }
 
-        public List<StudentsModel> GetAll()
+        public IList<Student> GetAll()
         {
-            if (File.Exists(StudentsFilePath))
-            {
-                string json = File.ReadAllText(StudentsFilePath);
-                return JsonConvert.DeserializeObject<List<StudentsModel>>(json) ?? new List<StudentsModel>();
-            }
-            return new List<StudentsModel>();
+            return _students;
         }
 
-        public StudentsModel GetById(string id)
+        public Student? GetById(string id)
         {
             return _students.Find(i => i.StudentId == id);
         }
 
-        public void AddNewStudent(StudentsModel newStudent)
+        public void Add(Student newStudent)
         {
             _students.Add(newStudent);
+            Save();
         }
 
-        public bool Update(string id, StudentsModel updatedStudent)
+        public bool Update(string id, Student updatedStudent)
         {
             var existingStudent = _students.Find(i => i.StudentId == id);
             if (existingStudent == null)
             {
                 return false;
             }
+
             existingStudent.FirstName = updatedStudent.FirstName;
+            existingStudent.MidlleName = updatedStudent.MidlleName;
+            existingStudent.LastName = updatedStudent.LastName;
+            existingStudent.JoiningBatch = updatedStudent.JoiningBatch;
+
+            Save();
+
             return true;
         }
         public bool Delete(string id)
@@ -63,9 +58,31 @@ namespace StudentmManagement.Services
             {
                 return false;
             }
+
             _students.Remove(existingStudent);
+
+            Save();
             return true;
         }
+
+        #region Helper Method
+        public List<Student> Load()
+        {
+            if (File.Exists(StudentsFilePath))
+            {
+                string json = File.ReadAllText(StudentsFilePath);
+                return JsonConvert.DeserializeObject<List<Student>>(json) ?? new List<Student>();
+            }
+            return new List<Student>();
+        }
+
+        public void Save()
+        {
+            string json = JsonConvert.SerializeObject(_students, Formatting.Indented);
+            File.WriteAllText(StudentsFilePath, json);
+        }
+        #endregion
+
 
     }
 }

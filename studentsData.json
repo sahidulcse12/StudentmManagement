@@ -1,0 +1,71 @@
+[
+  {
+    "FirstName": "Jahirul",
+    "MidlleName": "string",
+    "LastName": "string",
+    "StudentId": "CE17012",
+    "JoiningBatch": "string",
+    "Department": 1,
+    "Degree": 1,
+    "AttendedCourse": [
+      {
+        "CourseId": "CSE 101",
+        "CourseName": "Java",
+        "InstructorName": "Meshbah Uddin",
+        "NumberOfCredits": 3.0
+      }
+    ],
+    "SemestersAttended": [
+      {
+        "SemesterCode": 1,
+        "Year": "2023"
+      }
+    ]
+  },
+  {
+    "FirstName": "robi",
+    "MidlleName": "",
+    "LastName": "vai",
+    "StudentId": "12345",
+    "JoiningBatch": "Fall",
+    "Department": 1,
+    "Degree": 1,
+    "AttendedCourse": [
+      {
+        "CourseId": "",
+        "CourseName": "",
+        "InstructorName": "string",
+        "NumberOfCredits": 0.0
+      }
+    ],
+    "SemestersAttended": [
+      {
+        "SemesterCode": 1,
+        "Year": "2023"
+      }
+    ]
+  },
+  {
+    "FirstName": "Jubayer",
+    "MidlleName": "ahmed",
+    "LastName": "khan",
+    "StudentId": "55",
+    "JoiningBatch": "winter",
+    "Department": 0,
+    "Degree": 0,
+    "AttendedCourse": [
+      {
+        "CourseId": "string",
+        "CourseName": "string",
+        "InstructorName": "string",
+        "NumberOfCredits": 0.0
+      }
+    ],
+    "SemestersAttended": [
+      {
+        "SemesterCode": 0,
+        "Year": "string"
+      }
+    ]
+  }
+]
