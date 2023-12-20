@@ -14,7 +14,5 @@ namespace StudentmManagement.Models
         public Degree Degree { get; set; }
         public IList<Course> AttendedCourse { get; set; }
         public IList<Semester> SemestersAttended { get; set; }
-        //public IList<Course> Courses { get; set; }
-        //public IList<Semester> Semesters { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using StudentmManagement.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using StudentmManagement.Data;
 using StudentmManagement.DTO;
 using StudentmManagement.Interfaces;
 using StudentmManagement.Models;
@@ -11,23 +12,39 @@ namespace StudentmManagement.Services
         private readonly IGenericRepository<Student> _studentRepository;
         private readonly IGenericRepository<Course> _courseRepository;
         private readonly IGenericRepository<Semester> _semesterRepository;
+        private readonly DataContext _context;
 
         public StudentManagementService(ILogger<StudentManagementService> logger, 
             IGenericRepository<Student> studentRepository,
             IGenericRepository<Course> courseRepository,
-            IGenericRepository<Semester> semesterRepository
+            IGenericRepository<Semester> semesterRepository,
+            DataContext context
             )
         {
             _logger = logger;
             _studentRepository = studentRepository;
             _courseRepository = courseRepository;
             _semesterRepository = semesterRepository;
+            _context = context;
         }
 
-        public async Task<List<Student>> GetAll()
+        public async Task<List<StudentDto>> GetAll()
         {
-            var result = await _studentRepository.GetAll();
-            return result.ToList();
+            //var result = await _studentRepository.GetAll();
+            var result = await _context.Students.Include(x => x.SemestersAttended).Include(x => x.AttendedCourse).ToListAsync();
+            var response = result.Select(x => new StudentDto
+            {
+                FirstName = x.FirstName,
+                MidlleName = x.MidlleName,
+                LastName = x.LastName,
+                JoiningBatch = x.JoiningBatch,
+                Degree = x.Degree,
+                Department = x.Department,
+                AttendedCourse = x.AttendedCourse.Select(x => x.Id).ToList(),
+                SemestersAttended = x.SemestersAttended.Select(x => x.Id).ToList(),
+
+            });
+            return response.ToList();
         }
 
         public async Task<Student?> GetById(int id)

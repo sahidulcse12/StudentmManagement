@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using StudentmManagement.DTO;
 using StudentmManagement.Interfaces;
 using StudentmManagement.Models;
@@ -36,6 +37,7 @@ namespace StudentmManagement.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task AddStudent(StudentDto student)
         {
             await _service.Add(student);
