@@ -9,14 +9,9 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
 builder.Services.AddDbContext<DataContext>();
-
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped(typeof(IStudentManagementService), typeof(StudentManagementService));
-
-
-
 builder.Services.AddControllers();
 
 builder.Services.AddSwaggerGen(options =>
