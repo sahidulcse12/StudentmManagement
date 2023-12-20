@@ -14,7 +14,7 @@ namespace StudentmManagement.Services
         private readonly IGenericRepository<Semester> _semesterRepository;
         private readonly DataContext _context;
 
-        public StudentManagementService(ILogger<StudentManagementService> logger, 
+        public StudentManagementService(ILogger<StudentManagementService> logger,
             IGenericRepository<Student> studentRepository,
             IGenericRepository<Course> courseRepository,
             IGenericRepository<Semester> semesterRepository,
@@ -28,11 +28,11 @@ namespace StudentmManagement.Services
             _context = context;
         }
 
-        public async Task<List<StudentDto>> GetAll()
+        public async Task<List<StudentResponseDto>> GetAll()
         {
             //var result = await _studentRepository.GetAll();
             var result = await _context.Students.Include(x => x.SemestersAttended).Include(x => x.AttendedCourse).ToListAsync();
-            var response = result.Select(x => new StudentDto
+            var response = result.Select(x => new StudentResponseDto
             {
                 FirstName = x.FirstName,
                 MidlleName = x.MidlleName,
@@ -40,10 +40,21 @@ namespace StudentmManagement.Services
                 JoiningBatch = x.JoiningBatch,
                 Degree = x.Degree,
                 Department = x.Department,
-                AttendedCourse = x.AttendedCourse.Select(x => x.Id).ToList(),
-                SemestersAttended = x.SemestersAttended.Select(x => x.Id).ToList(),
+                AttendedCourse = x.AttendedCourse.Select(y => new CourseDto
+                    {
+                        CourseCode = y.CourseCode,
+                        CourseName = y.CourseName,
+                        InstructorName = y.InstructorName,
+                        NumberOfCredits = y.NumberOfCredits,
+                    }).ToList(),
+                SemestersAttended = x.SemestersAttended.Select(s=> new SemesterDto 
+                    { 
+                        SemesterCode = s.SemesterCode,
+                        Year = s.Year,
+                    }).ToList(),
 
             });
+            //var courseData = result.Select(x=>x.AttendedCourse).ToList();
             return response.ToList();
         }
 
@@ -55,6 +66,7 @@ namespace StudentmManagement.Services
 
             return result;
         }
+
         public async Task Add(StudentDto s)
         {
             var student = new Student

@@ -6,7 +6,7 @@ namespace StudentmManagement.Interfaces
 {
     public interface IStudentManagementService
     {
-        Task<List<StudentDto>> GetAll();
+        Task<List<StudentResponseDto>> GetAll();
         Task<Student?> GetById(int id);
         Task Add(StudentDto student);
         Task Update(int id, StudentDto request);

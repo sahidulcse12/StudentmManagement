@@ -71,9 +71,7 @@ namespace StudentmManagement.Controllers
         [HttpDelete("{id}"), Authorize]
         public async Task<IActionResult> Delete(int id)
         {
-
             await _service.Delete(id);
-
             return Ok();
         }
     }

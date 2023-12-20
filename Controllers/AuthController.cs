@@ -33,7 +33,7 @@ namespace StudentmManagement.Controllers
                         new Claim(JwtRegisteredClaimNames.Email, user.UserName),
                         new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
                     }),
-                    Expires = DateTime.UtcNow.AddSeconds(10),
+                    Expires = DateTime.UtcNow.AddHours(10),
                     Audience = audience,
                     Issuer = issuer,
                     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha512Signature)
