@@ -8,9 +8,9 @@ using System.Text;
 
 namespace StudentmManagement.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/[controller]")]
     [ApiController]
-    public class LoginController : ControllerBase
+    public class AuthController : ControllerBase
     {
         [HttpPost, Route("login")]
         public IActionResult Login(UserDto user)

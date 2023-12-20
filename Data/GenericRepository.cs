@@ -35,7 +35,11 @@ namespace StudentmManagement.Data
         public async Task Delete(int id)
         {
             var result = await GetById(id);
+            if (result is null)
+                return;
+
             _dataContext.Set<T>().Remove(result);
+            await _dataContext.SaveChangesAsync();
         }
     }
 }

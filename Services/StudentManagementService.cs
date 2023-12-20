@@ -111,10 +111,6 @@ namespace StudentmManagement.Services
         }
         public async Task Delete(int id)
         {
-            var result = await _studentRepository.GetById(id);
-            if (result is null)
-                return;
-
             await _studentRepository.Delete(id);
         }
 
