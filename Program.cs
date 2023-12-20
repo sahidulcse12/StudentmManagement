@@ -1,20 +1,25 @@
+using StudentmManagement.Data;
 using StudentmManagement.Interfaces;
+using StudentmManagement.Models;
 using StudentmManagement.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 
-builder.Services.AddScoped<IStudentManagementService,StudentManagementService>();
+builder.Services.AddDbContext<DataContext>();
+
+builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+builder.Services.AddScoped(typeof(IStudentManagementService), typeof(StudentManagementService));
+//builder.Services.AddScoped<IStudentManagementService, StudentManagementService>();
+
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using StudentmManagement.DTO;
 using StudentmManagement.Interfaces;
 using StudentmManagement.Models;
 
 namespace StudentmManagement.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     public class StudentManagementController:ControllerBase
     {
         private readonly ILogger<Student> _logger;
@@ -18,51 +19,60 @@ namespace StudentmManagement.Controllers
         }
 
         [HttpGet]
-        public ActionResult Get()
+        public async Task<ActionResult<List<Student>>> GetAllStudents()
         {
-            var item = _service.GetAll();
+            var item = await _service.GetAll();
             return Ok(item);
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Student> Get(string id) 
-        { 
-            var studnet = _service.GetById(id);
-            if(studnet == null)
-            {
-                return NotFound();
-            }
-            return Ok(studnet);
+        public async Task<ActionResult<Student>> GetSingleStudent(int id)
+        {
+            var result = await _service.GetById(id);
+            if (result is null)
+                return NotFound("Student not found.");
+
+            return Ok(result);
         }
 
         [HttpPost]
-        public IActionResult Add([FromBody] Student newStudnet) 
-        { 
-            _service.Add(newStudnet);
-            return CreatedAtAction(nameof(Get),new {id=newStudnet.StudentId},newStudnet);
+        public async Task AddStudent(StudentDto student)
+        {
+            await _service.Add(student);
         }
 
-        [HttpPut]
-        public IActionResult Update(string id,[FromBody] Student updateStudnet)
+        [HttpPost]
+        public async Task AddCourse(CourseDto course)
         {
-            var success = _service.Update(id, updateStudnet);
-            if(!success)
-            {
-                return NotFound();
-            }
-            return NoContent();
+            await _service.AddSingleCourse(course);
+            //return Ok();
+        }
+
+        [HttpPost]
+        public async Task AddSemester(SemesterDto semester)
+        {
+            await _service.AddSingleSemester(semester);
+            //return Ok();
+        }
+
+        [HttpPut("{id}")]
+        public async Task Update(int id, StudentDto student)
+        {
+            var result = await _service.GetById(id);
+            if (result is null)
+                return;
+
+            await _service.Update(id,student);
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(string id)
+        public async Task Delete(int id)
         {
-            var success = _service.Delete(id);
-            if(!success)
-            {
-                return NotFound();
-            }
-            return NoContent() ;
+            var result = await _service.GetById(id);
+            if (result is null)
+                return;
 
+            await _service.Delete(id);
         }
     }
 }

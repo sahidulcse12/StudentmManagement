@@ -1,88 +1,105 @@
-﻿using Newtonsoft.Json;
+﻿using StudentmManagement.Data;
+using StudentmManagement.DTO;
 using StudentmManagement.Interfaces;
 using StudentmManagement.Models;
-using System.Net.Http.Json;
-using System.Text.Json.Serialization;
 
 namespace StudentmManagement.Services
 {
     public class StudentManagementService : IStudentManagementService
     {
-        private static string StudentsFilePath = "studentsData.json";
         private readonly ILogger<StudentManagementService> _logger;
-        private static List<Student> _students = new List<Student>();
+        private readonly IGenericRepository<Student> _studentRepository;
+        private readonly IGenericRepository<Course> _courseRepository;
+        private readonly IGenericRepository<Semester> _semesterRepository;
 
-        public StudentManagementService(ILogger<StudentManagementService> logger)
+        public StudentManagementService(ILogger<StudentManagementService> logger, 
+            IGenericRepository<Student> studentRepository,
+            IGenericRepository<Course> courseRepository,
+            IGenericRepository<Semester> semesterRepository
+            )
         {
             _logger = logger;
-            _students = Load();
+            _studentRepository = studentRepository;
+            _courseRepository = courseRepository;
+            _semesterRepository = semesterRepository;
         }
 
-        public IList<Student> GetAll()
+        public async Task<List<Student>> GetAll()
         {
-            return _students;
+            var result = await _studentRepository.GetAll();
+            return result.ToList();
         }
 
-        public Student? GetById(string id)
+        public async Task<Student?> GetById(int id)
         {
-            return _students.Find(i => i.StudentId == id);
-        }
+            var result = await _studentRepository.GetById(id);
+            if (result is null)
+                return null;
 
-        public void Add(Student newStudent)
-        {
-            _students.Add(newStudent);
-            Save();
+            return result;
         }
-
-        public bool Update(string id, Student updatedStudent)
+        public async Task Add(StudentDto s)
         {
-            var existingStudent = _students.Find(i => i.StudentId == id);
-            if (existingStudent == null)
+            var student = new Student
             {
-                return false;
-            }
+                FirstName = s.FirstName,
+                MidlleName = s.MidlleName,
+                LastName = s.LastName,
+                Degree = s.Degree,
+                Department = s.Department,
+                JoiningBatch = s.JoiningBatch,
+            };
+            var courses = await _courseRepository.GetAll();
+            var cous = courses.Where(x => s.AttendedCourse.Contains(x.Id)).ToList();
+            student.AttendedCourse = cous;
 
-            existingStudent.FirstName = updatedStudent.FirstName;
-            existingStudent.MidlleName = updatedStudent.MidlleName;
-            existingStudent.LastName = updatedStudent.LastName;
-            existingStudent.JoiningBatch = updatedStudent.JoiningBatch;
+            var semesters = await _semesterRepository.GetAll();
+            var sem = semesters.Where(x => s.SemestersAttended.Contains(x.Id)).ToList();
+            student.SemestersAttended = sem;
 
-            Save();
-
-            return true;
+            await _studentRepository.Add(student);
         }
-        public bool Delete(string id)
+        public async Task AddSingleCourse(CourseDto c)
         {
-            var existingStudent = _students.Find(i => i.StudentId == id);
-            if(existingStudent == null)
+            var course = new Course
             {
-                return false;
-            }
-
-            _students.Remove(existingStudent);
-
-            Save();
-            return true;
+                CourseCode = c.CourseCode,
+                CourseName = c.CourseName,
+                NumberOfCredits = c.NumberOfCredits,
+                InstructorName = c.InstructorName,
+            };
+            await _courseRepository.Add(course);
         }
-
-        #region Helper Method
-        public List<Student> Load()
+        public async Task AddSingleSemester(SemesterDto se)
         {
-            if (File.Exists(StudentsFilePath))
+            var semester = new Semester
             {
-                string json = File.ReadAllText(StudentsFilePath);
-                return JsonConvert.DeserializeObject<List<Student>>(json) ?? new List<Student>();
-            }
-            return new List<Student>();
+                SemesterCode = se.SemesterCode,
+                Year = se.Year,
+            };
+            await _semesterRepository.Add(semester);
         }
-
-        public void Save()
+        public async Task Update(int id, StudentDto request)
         {
-            string json = JsonConvert.SerializeObject(_students, Formatting.Indented);
-            File.WriteAllText(StudentsFilePath, json);
-        }
-        #endregion
+            var result = await _studentRepository.GetById(id);
+            if (result is null)
+                return;
 
+            result.FirstName = request.FirstName;
+            result.MidlleName = request.MidlleName;
+            result.LastName = request.LastName;
+            result.JoiningBatch = request.JoiningBatch;
+
+            await _studentRepository.Update(result);
+        }
+        public async Task Delete(int id)
+        {
+            var result = await _studentRepository.GetById(id);
+            if (result is null)
+                return;
+
+            await _studentRepository.Delete(id);
+        }
 
     }
 }

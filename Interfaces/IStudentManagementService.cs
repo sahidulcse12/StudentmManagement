@@ -1,15 +1,18 @@
 ﻿using Newtonsoft.Json;
+using StudentmManagement.DTO;
 using StudentmManagement.Models;
 
 namespace StudentmManagement.Interfaces
 {
     public interface IStudentManagementService
     {
-        public void Add(Student newStudent);
-        public bool Update(string id, Student updatedStudent);
-        public Student? GetById(string id);
-        public IList<Student> GetAll();
-        public bool Delete(string id);
+        Task<List<Student>> GetAll();
+        Task<Student?> GetById(int id);
+        Task Add(StudentDto student);
+        Task Update(int id, StudentDto request);
+        Task Delete(int id);
+        Task AddSingleCourse(CourseDto course);
+        Task AddSingleSemester(SemesterDto semester);
 
     }
 }
