@@ -20,6 +20,7 @@ namespace StudentmManagement.Controllers
         }
 
         [HttpGet]
+        //[Authorize]
         public async Task<ActionResult<List<Student>>> GetAllStudents()
         {
             var item = await _service.GetAll();
@@ -37,7 +38,7 @@ namespace StudentmManagement.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        //[Authorize]
         public async Task AddStudent(StudentDto student)
         {
             await _service.Add(student);

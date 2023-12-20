@@ -36,6 +36,7 @@ namespace StudentmManagement.Data
         {
             var result = await GetById(id);
             _dataContext.Set<T>().Remove(result);
+            await _dataContext.SaveChangesAsync();
         }
     }
 }
